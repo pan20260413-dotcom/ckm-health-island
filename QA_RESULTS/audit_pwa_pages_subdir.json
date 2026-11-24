@@ -1,0 +1,57 @@
+{
+  "level": "browser simulation",
+  "checks": [
+    {
+      "name": "Cache API available on localhost",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "new project shell cache installed",
+      "result": "PASS",
+      "detail": "['unrelated-site-cache', 'ckm-health-island-v312-shell-1']"
+    },
+    {
+      "name": "only named legacy CKM caches removed",
+      "result": "PASS",
+      "detail": "['unrelated-site-cache', 'ckm-health-island-v312-shell-1']"
+    },
+    {
+      "name": "manifest loads, relative start/scope and icons are valid",
+      "result": "PASS",
+      "detail": "{'start_url': './index.html', 'scope': './'}"
+    },
+    {
+      "name": "iOS touch icon declared and present",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "offline navigation renders app",
+      "result": "PASS",
+      "detail": "app shell and task cards loaded"
+    },
+    {
+      "name": "offline health task writes localStorage",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "offline styles present",
+      "result": "PASS",
+      "detail": "rgb(244, 251, 246)"
+    },
+    {
+      "name": "Android Chrome device-profile viewport has no horizontal overflow",
+      "result": "PASS",
+      "detail": "width=412 overflow=False"
+    },
+    {
+      "name": "Android profile no page errors",
+      "result": "PASS",
+      "detail": "[]"
+    }
+  ],
+  "console_errors": [],
+  "page_errors": []
+}
