@@ -1,7 +1,6 @@
 from playwright.sync_api import sync_playwright
-from test_config import BASE_URL, ROOT_URL
-import json, tempfile
-BASE=BASE_URL;out=[]
+import json
+BASE='http://127.0.0.1:4182/index.html';out=[]
 def check(n,ok,d=''):
  out.append({'name':n,'result':'PASS' if ok else 'FAIL','detail':d})
  if not ok: raise AssertionError(n+' '+d)
@@ -10,7 +9,7 @@ with sync_playwright() as p:
  page.goto(BASE,wait_until='networkidle');page.wait_for_selector('#habit-system')
  # A reserved object-property ID in a full backup must be rejected.
  backup=page.evaluate('HabitSystem._backupEnvelope()');backup['data']['passport']['tasks']={'__proto__':{'title':'x','category':'x','status':'completed','startedAt':'2026-11-23','completedAt':'2026-11-23','xp':1}}
- badfile=__import__('pathlib').Path(tempfile.gettempdir())/'ckm-v312-prototype-backup.json';badfile.write_text(json.dumps(backup),encoding='utf-8')
+ badfile=Path=__import__('pathlib').Path(__file__).with_name('prototype-backup.json');badfile.write_text(json.dumps(backup),encoding='utf-8')
  before=json.dumps(page.evaluate('ckmState()'),sort_keys=True,ensure_ascii=False)
  with page.expect_file_chooser() as fc:page.locator('#habit-system [data-action="import"]').click()
  fc.value.set_files(str(badfile));page.wait_for_timeout(300)

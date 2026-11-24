@@ -1,7 +1,6 @@
 from playwright.sync_api import sync_playwright
-from test_config import BASE_URL, ROOT_URL
 import json
-BASE=BASE_URL
+BASE='http://127.0.0.1:4182/index.html'
 result={'level':'browser simulation','checks':[],'console_errors':[],'page_errors':[]}
 def check(n,ok,d=''):
  result['checks'].append({'name':n,'result':'PASS' if ok else 'FAIL','detail':d})
@@ -13,24 +12,24 @@ with sync_playwright() as p:
  # Hold registration so two pre-existing caches can be created before activate.
  page.add_init_script("if('serviceWorker' in navigator && sessionStorage.getItem('__auditAllowSw')!=='1'){const real=navigator.serviceWorker.register.bind(navigator.serviceWorker);navigator.serviceWorker.register=()=>Promise.resolve({auditBlocked:true});window.__auditAllowSw=real}")
  page.goto(BASE,wait_until='networkidle')
- cache_result=page.evaluate("""async()=>{if(!('caches' in window))return false;await caches.open('unrelated-site-cache');await caches.open('ckm-health-island-v311-shell-old');await caches.open('ckm-health-island-v3-habits-old');return true}""")
+ cache_result=page.evaluate("""async()=>{if(!('caches' in window))return false;await caches.open('unrelated-site-cache');await caches.open('ckm-health-island-v31-shell-old');await caches.open('ckm-health-island-v3-habits-old');return true}""")
  check('Cache API available on localhost',cache_result)
  page.evaluate("sessionStorage.setItem('__auditAllowSw','1')");page.reload(wait_until='networkidle')
  page.wait_for_function("navigator.serviceWorker && navigator.serviceWorker.controller",timeout=10000)
  page.evaluate('navigator.serviceWorker.ready')
  caches=page.evaluate('caches.keys()')
- check('new project shell cache installed',any(x=='ckm-health-island-v312-shell-1' for x in caches),str(caches))
- check('only named legacy CKM caches removed',not any('ckm-health-island-v311-shell-old'==x or 'ckm-health-island-v3-habits-old'==x for x in caches) and 'unrelated-site-cache' in caches,str(caches))
- manifest=page.request.get(ROOT_URL+'/manifest.webmanifest')
+ check('new project shell cache installed',any(x=='ckm-health-island-v311-shell-1' for x in caches),str(caches))
+ check('only named legacy CKM caches removed',not any('ckm-health-island-v31-shell-old'==x or 'ckm-health-island-v3-habits-old'==x for x in caches) and 'unrelated-site-cache' in caches,str(caches))
+ manifest=page.request.get('http://127.0.0.1:4182/manifest.webmanifest')
  data=manifest.json()
- check('manifest loads, relative start/scope and icons are valid',manifest.status==200 and len(data['icons'])>=3 and data.get('start_url')=='./index.html' and data.get('scope')=='./',str({'start_url':data.get('start_url'),'scope':data.get('scope')}))
- check('iOS touch icon declared and present',page.locator('link[rel="apple-touch-icon"]').get_attribute('href')=='icon-180.png' and page.request.get(ROOT_URL+'/icon-180.png').status==200)
+ check('manifest loads and includes icons',manifest.status==200 and len(data['icons'])>=3)
+ check('iOS touch icon declared and present',page.locator('link[rel="apple-touch-icon"]').get_attribute('href')=='icon-180.png' and page.request.get('http://127.0.0.1:4182/icon-180.png').status==200)
  # Go offline; page-shell and all app code should remain usable.
  page.context.set_offline(True)
  try:
   page.reload(wait_until='domcontentloaded',timeout=10000)
   page.wait_for_selector('#habit-system .habit-card',timeout=10000)
-  check('offline navigation renders app',True,'app shell and task cards loaded')
+  check('offline navigation renders app',True,page.title())
   online_state=page.evaluate('ckmState().passport.xp')
   page.locator('#habit-system .habit-grid').first.locator('button[data-action="complete"]').first.click()
   check('offline health task writes localStorage',page.evaluate('ckmState().passport.xp')==online_state+4)

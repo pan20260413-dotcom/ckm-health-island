@@ -1,5 +1,5 @@
-const CACHE_NAME='ckm-health-island-v312-shell-1';
-const MANAGED_PREFIXES=['ckm-health-island-v312-shell-','ckm-health-island-v311-shell-','ckm-health-island-v31-shell-','ckm-health-island-v3-habits-'];
+const CACHE_NAME='ckm-health-island-v311-shell-1';
+const MANAGED_PREFIXES=['ckm-health-island-v311-shell-','ckm-health-island-v31-shell-','ckm-health-island-v3-habits-'];
 const SHELL=['./','./index.html','./habit-system.css','./habit-system.js','./manifest.webmanifest','./icon.svg','./icon-180.png','./icon-192.png','./icon-512.png','./island_growth_base.png','./island_growth_preview.png'];
 const APP_PATHS=new Set(SHELL.map(path=>new URL(path,self.registration.scope).pathname));
 
